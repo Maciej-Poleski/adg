@@ -9,4 +9,4 @@ add_library(ConnCM ${SOURCES})
 
 set_target_properties(ConnCM PROPERTIES COMPILE_FLAGS "-std=c++11")
 
-target_link_libraries(ConnCM ${Boost_LIBRARIES})
+target_link_libraries(ConnCM ${Boost_LIBRARIES} details)

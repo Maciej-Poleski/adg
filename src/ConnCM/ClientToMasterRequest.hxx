@@ -1,6 +1,6 @@
 /*
  * Maciej Poleski (C) 2012
-*/
+ */
 
 #ifndef CLIENTTOMASTERREQUEST_H
 #define CLIENTTOMASTERREQUEST_H
@@ -48,6 +48,31 @@ public:
      * @return ID podżądania
      */
     std::uint32_t addDiscussionToSynchronize(std::uint32_t discussionId);
+
+    /**
+     * Wysyła żądanie do Mastera
+     *
+     * @param socket gniazdo na które żądanie zostanie wysłane
+     */
+    void send(boost::asio::ip::tcp::socket &socket) const;
+
+    /**
+     * @return numer wersji listy dyskusji po stronie klienta
+     */
+    std::uint32_t discussionListVersion() const;
+
+    /**
+     * @return Lista nowych dyskusji do utworzenia
+     */
+    const std::vector< std::string >& newDiscussions() const;
+
+    /**
+     * @return Lista dyskusji do synchronizacji
+     */
+    const std::vector< uint32_t >& discussionsToSynchronization() const;
+
+private:
+    ClientToMasterRequest();
 
 private:
     /// Lista nowych dyskusji które klient chce utworzyć
