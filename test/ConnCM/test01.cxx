@@ -2,6 +2,8 @@
 
 #include <ClientToMasterRequest.hxx>
 
+#include <thread>
+
 BOOST_AUTO_TEST_CASE(SendAndReceive)
 {
 }
