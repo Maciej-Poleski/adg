@@ -22,7 +22,7 @@ int main(int argc,char**argv)
     rep.addNewDiscussion(1,{1,1});
     rep.addNewDiscussion(3,{3,33});
     rep.addNewDiscussion(4,{4,4444});
-  //  rep.addNewDiscussionFromUpdate(2,"Dyskusja 2 z aktualizacji");
+    rep.addNewDiscussionFromUpdate(2,"Dyskusja 2 z aktualizacji");
     rep.addDiscussionToSynchronization({12,1212});
     rep.addDiscussionToSynchronization({133,133});
     rep.sendTo(sock);

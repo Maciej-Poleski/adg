@@ -16,7 +16,7 @@
  * Obiekt tej klasy służy do konstrukcji żądania, przesłania go do Mastera
  * oraz jego odebrania i przeanalizowania przez Mastera.
  */
-class ClientToMasterRequest
+class ClientToMasterRequest final
 {
 public:
     /**
@@ -31,7 +31,7 @@ public:
      * @param socket gniazdo z którego obiekt będzie odbierany
      * @return Odebrane żądanie
      */
-    static ClientToMasterRequest receive(boost::asio::ip::tcp::socket &socket);
+    static ClientToMasterRequest receiveFrom(boost::asio::ip::tcp::socket &socket);
 
     /**
      * Dodaje żądanie utworzenia nowej dyskusji o podanej nazwie
@@ -54,7 +54,7 @@ public:
      *
      * @param socket gniazdo na które żądanie zostanie wysłane
      */
-    void send(boost::asio::ip::tcp::socket &socket) const;
+    void sendTo(boost::asio::ip::tcp::socket &socket) const;
 
     /**
      * @return numer wersji listy dyskusji po stronie klienta
