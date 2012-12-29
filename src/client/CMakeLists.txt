@@ -9,4 +9,4 @@ add_executable(client ${SOURCES})
 
 set_target_properties(client PROPERTIES COMPILE_FLAGS "-std=c++11")
 
-target_link_libraries(client ${Boost_LIBRARIES} ConnCM shared)
+target_link_libraries(client ${Boost_LIBRARIES} ConnCM ConnCS shared)
