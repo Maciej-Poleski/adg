@@ -74,7 +74,8 @@ void ClientToMasterReply::sendTo(boost::asio::ip::tcp::socket& socket) const
             writeToSocket(o.second,socket);
     }
     writeToSocket(_discussionListVersion,socket);
-    writeToSocket(_newDiscussionsFromUpdate.size(),socket);
+    writeToSocket(static_cast<std::uint32_t>(_newDiscussionsFromUpdate.size()),
+                  socket);
     for(const auto o : _newDiscussionsFromUpdate)
     {
         writeToSocket(o.first,socket);

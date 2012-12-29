@@ -1,5 +1,6 @@
 
 add_subdirectory(ConnCM)
+add_subdirectory(ConnCS)
 
 add_subdirectory(shared)
 

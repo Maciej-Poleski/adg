@@ -59,20 +59,23 @@ void ClientToMasterRequest::sendTo(boost::asio::ip::tcp::socket& socket) const
     using namespace detail;
     byte version[]= {1};
     boost::asio::write(socket,boost::asio::buffer(version));
-    writeToSocket(_newDiscussions.size(),socket);
+    writeToSocket(static_cast<std::uint32_t>(_newDiscussions.size()),socket);
     for(const auto s : _newDiscussions)
     {
         writeToSocket(s,socket);
     }
     writeToSocket(_discussionListVersion,socket);
-    writeToSocket(_discussionsToSynchronization.size(),socket);
+    writeToSocket(static_cast<std::uint32_t>
+                  (_discussionsToSynchronization.size()),
+                  socket);
     for(const auto d : _discussionsToSynchronization)
     {
         writeToSocket(d,socket);
     }
 }
 
-ClientToMasterRequest ClientToMasterRequest::receiveFrom(boost::asio::ip::tcp::socket& socket)
+ClientToMasterRequest ClientToMasterRequest::receiveFrom(
+    boost::asio::ip::tcp::socket& socket)
 {
     using namespace detail;
     ClientToMasterRequest result;

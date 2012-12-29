@@ -4,6 +4,30 @@
 #include <boost/asio/write.hpp>
 #include <boost/asio/read.hpp>
 
+void checkDiscussionID(DiscussionID id)
+{
+    if(id==0)
+        throw std::logic_error("Discussion ID can not be 0");
+}
+
+void checkDiscussionVersion(DiscussionVersion version)
+{
+    if(version==0)
+        throw std::logic_error("Discussion version can not be 0");
+}
+
+void checkDiscussionListVersion(DiscussionListVersion version)
+{
+    if(version==0)
+        throw std::logic_error("Version of discussion list can not be 0");
+}
+
+void checkDiscussionName(const std::string& name)
+{
+    if(name.empty())
+        throw std::logic_error("Discussion name can not be empty");
+}
+
 namespace detail
 {
 union Uint32Union
@@ -24,7 +48,7 @@ union Uint16Union
     };
 };
 
-void writeToSocket(uint32_t count, boost::asio::ip::tcp::socket& socket)
+void writeToSocket(std::uint32_t count, boost::asio::ip::tcp::socket& socket)
 {
     Uint32Union u;
     u.ndc=count;
@@ -33,7 +57,7 @@ void writeToSocket(uint32_t count, boost::asio::ip::tcp::socket& socket)
 
 void writeToSocket(const std::string& string, boost::asio::ip::tcp::socket& socket)
 {
-    writeToSocket(string.size(),socket);
+    writeToSocket(static_cast<std::uint32_t>(string.size()),socket);
     boost::asio::write(socket,boost::asio::buffer(string));
 }
 
