@@ -31,3 +31,9 @@ const std::string& MasterToSlaveRequestNewDiscussion::name() const
 {
     return _name;
 }
+
+void MasterToSlaveRequestNewDiscussion::check() const
+{
+    checkDiscussionId(_id);
+    checkDiscussionName(_name);
+}

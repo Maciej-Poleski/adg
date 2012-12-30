@@ -15,7 +15,7 @@ int main(int argc,char**argv)
     sock.connect(ip::tcp::endpoint(ip::address::from_string("127.0.0.1"),8888));
     MasterToSlaveRequestNewDiscussion req;
     req.setId(22);
-    req.setName("aaaaasd");
+    //req.setName("");
     sendTo(req,sock);
     sock.close();
     return 0;

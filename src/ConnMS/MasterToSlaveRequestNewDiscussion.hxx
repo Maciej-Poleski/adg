@@ -26,12 +26,29 @@ public:
     DiscussionId id() const;
     const std::string & name() const;
 
+    void check() const;
+
 private:
     template<class Action>
-    void serialize(Action & ar, const unsigned int version)
+    void save(Action & ar, const unsigned int version) const
     {
-        ar & _id & _name;
+        check();
+        ar << _id << _name;
     }
+    template<class Action>
+    void load(Action & ar, const unsigned int version)
+    {
+        ar >> _id >> _name;
+        try {
+            check();
+        }
+        catch(std::logic_error e)
+        {
+            throw std::runtime_error(std::string("Received malformed object: ")
+                                     +e.what());
+        }
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 private:
     DiscussionId _id;
