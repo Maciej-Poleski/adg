@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 
 #include "../ConnCS/ClientToSlaveRequest.hxx"
+#include "../ConnCS/ClientToSlaveReply.hxx"
 
 int main(int argc,char**argv)
 {
@@ -20,5 +21,16 @@ int main(int argc,char**argv)
         for(auto b : a.second)
             std::cout<<' '<<b.message()<<'\n';
     }
+    ClientToSlaveReply rep;
+    rep.addCommitedPostId(1);
+    rep.addCommitedPostId(2);
+    rep.addCommitedPostId(1);
+    rep.addCommitedPostId(1);
+    rep.addPreparedUpdate(2,{{1,Post()}});
+    rep.addPreparedUpdate(4,{{1,Post()}});
+    rep.addPreparedUpdate(4,{{1,Post()}});
+
+    rep.sendTo(sock,req);
+    sock.close();
     return 0;
 }

@@ -4,7 +4,7 @@
 #include <boost/asio/write.hpp>
 #include <boost/asio/read.hpp>
 
-void checkDiscussionID(DiscussionID id)
+void checkDiscussionId(DiscussionId id)
 {
     if(id==0)
         throw std::logic_error("Discussion ID can not be 0");
@@ -26,6 +26,12 @@ void checkDiscussionName(const std::string& name)
 {
     if(name.empty())
         throw std::logic_error("Discussion name can not be empty");
+}
+
+void checkPostId(PostId id)
+{
+    if(id==0)
+        throw std::logic_error("Post ID can not be 0");
 }
 
 namespace detail

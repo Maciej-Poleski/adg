@@ -13,6 +13,8 @@
 
 #include "Post.hxx"
 
+#include "../shared/Request.hxx"
+
 /**
  * Przechowuje żądanie klienta da Slave. Pozwala na jego wysłanie oraz
  * odebranie.
@@ -59,13 +61,13 @@ public:
     /**
      * @return lista dyskusji wraz z numerem wersji do aktualizacji
      */
-    const std::vector<std::pair<std::uint32_t,std::uint32_t>>&
+    const std::vector<std::pair<DiscussionId,DiscussionVersion>>&
         discussionsToUpdate() const;
 
     /**
      * @return lista dyskusji wraz z wiadomościami do przesłania na serwer
      */
-    const std::vector<std::pair<std::uint32_t,std::vector<Post>>> &
+    const std::vector<std::pair<DiscussionId,std::vector<Post>>> &
         discussionsToCommit() const;
 
 private:

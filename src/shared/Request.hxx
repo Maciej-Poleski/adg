@@ -1,3 +1,7 @@
+
+#ifndef REQUEST_HXX
+#define REQUEST_HXX
+
 #include <vector>
 #include <string>
 #include <cstdint>
@@ -6,16 +10,17 @@
 
 class Address;
 
-typedef std::uint32_t DiscussionID;
+typedef std::uint32_t DiscussionId;
 typedef std::uint32_t DiscussionVersion;
 typedef std::uint32_t DiscussionListVersion;
+typedef std::uint32_t PostId;
 
 /**
  * Sprawdza czy dane ID może być poprawnym ID dyskusji
  *
  * @param id ID które będzie sprawdzone
  */
-void checkDiscussionID(DiscussionID id);
+void checkDiscussionId(DiscussionId id);
 
 /**
  * Sprawdza czy dany numer wersji może być poprawnym numerem wersji dyskusji
@@ -38,6 +43,13 @@ void checkDiscussionListVersion(DiscussionListVersion version);
  * @param name napis który będzie sprawdzony
  */
 void checkDiscussionName(const std::string &name);
+
+/**
+ * Sprawdza czy dane ID może być poprawnym ID wiadomości
+ *
+ * @param id ID które będzie sprawdzone
+ */
+void checkPostId(PostId id);
 
 namespace detail
 {
@@ -77,3 +89,5 @@ T readFromSocket(boost::asio::ip::tcp::socket& socket)
     return T::receiveFrom(socket);
 }
 }
+
+#endif

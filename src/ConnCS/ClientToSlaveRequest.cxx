@@ -18,7 +18,7 @@ ClientToSlaveRequest::ClientToSlaveRequest()
 void ClientToSlaveRequest::addDiscussionToUpdate(std::uint32_t id,
         std::uint32_t version)
 {
-    checkDiscussionID(id);
+    checkDiscussionId(id);
     checkDiscussionVersion(version);
     if(std::find_if(_discussionsToUpdate.cbegin(),_discussionsToUpdate.cend(),
                     [id](const std::pair<std::uint32_t,std::uint32_t> &o)
@@ -34,7 +34,7 @@ void ClientToSlaveRequest::addDiscussionToUpdate(std::uint32_t id,
 void ClientToSlaveRequest::addPostToCommit(std::uint32_t discussionID,
         const Post& post)
 {
-    checkDiscussionID(discussionID);
+    checkDiscussionId(discussionID);
     post.check();
     auto i=std::find_if(_discussionsToCommit.begin(),_discussionsToCommit.end(),
                         [discussionID](decltype(_discussionsToCommit[0]) &o)
@@ -53,13 +53,13 @@ void ClientToSlaveRequest::addPostToCommit(std::uint32_t discussionID,
     }
 }
 
-const std::vector< std::pair< ::uint32_t, ::uint32_t > >&
+const std::vector< std::pair< DiscussionId, DiscussionVersion > >&
 ClientToSlaveRequest::discussionsToUpdate() const
 {
     return _discussionsToUpdate;
 }
 
-const std::vector< std::pair< ::uint32_t, std::vector< Post > > >&
+const std::vector< std::pair< DiscussionId, std::vector< Post > > >&
 ClientToSlaveRequest::discussionsToCommit() const
 {
     return _discussionsToCommit;
@@ -121,7 +121,7 @@ ClientToSlaveRequest ClientToSlaveRequest::receiveFrom(
             for(std::size_t i=0; i<count; ++i)
             {
                 auto id=readFromSocket< std::uint32_t >(socket);
-                checkDiscussionID(id);
+                checkDiscussionId(id);
                 auto c=readFromSocket< std::uint32_t >(socket);
                 if(c==0)
                 {

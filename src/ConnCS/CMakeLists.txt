@@ -5,6 +5,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 set(SOURCES
     ClientToSlaveRequest.cxx
+    ClientToSlaveReply.cxx
     Post.cxx
 )
 

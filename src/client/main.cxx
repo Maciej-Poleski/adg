@@ -5,6 +5,7 @@
 #include "../ConnCM/ClientToMasterRequest.hxx"
 #include "../ConnCM/ClientToMasterReply.hxx"
 #include "../ConnCS/ClientToSlaveRequest.hxx"
+#include "../ConnCS/ClientToSlaveReply.hxx"
 
 int main(int argc,char**argv)
 {
@@ -42,6 +43,16 @@ int main(int argc,char**argv)
     req.addPostToCommit(2,p3);
     req.addPostToCommit(3,p4);
     req.sendTo(sock);
-    sock.close();
+    ClientToSlaveReply rep=ClientToSlaveReply::receiveFrom(sock,req);
+    for(auto o : rep.commited())
+        std::cout<<o<<'\n';
+    for(auto o : rep.updates())
+    {
+        std::cout<<' '<<o.first<<'\n';
+        for(auto oo : o.second)
+        {
+            std::cout<<"   "<<oo.first<<' '<<oo.second.message()<<'\n';
+        }
+    }
     return 0;
 }
