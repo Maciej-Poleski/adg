@@ -150,9 +150,9 @@ T receiveFrom(boost::asio::ip::tcp::socket& socket)
     using namespace detail;
     auto size=readFromSocket<std::uint32_t>(socket);
     boost::asio::streambuf buf;
-    boost::archive::binary_iarchive ar(buf);
     boost::asio::read(socket,buf,boost::asio::transfer_exactly(size));
     buf.commit(size);
+    boost::archive::binary_iarchive ar(buf);
     T result;
     ar>>result;
     return result;
