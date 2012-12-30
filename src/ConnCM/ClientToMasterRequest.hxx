@@ -11,6 +11,8 @@
 
 #include <boost/asio/ip/tcp.hpp>
 
+#include "../shared/Request.hxx"
+
 /**
  * Żądanie klienta do Mastera.
  * Obiekt tej klasy służy do konstrukcji żądania, przesłania go do Mastera

@@ -13,6 +13,7 @@
 #include <boost/asio/ip/tcp.hpp>
 
 #include "../shared/Address.hxx"
+#include "../shared/Request.hxx"
 
 class ClientToMasterRequest;
 /**

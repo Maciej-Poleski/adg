@@ -145,3 +145,4 @@ ClientToSlaveRequest ClientToSlaveRequest::receiveFrom(
     }
     return result;
 }
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012  Maciej Poleski <maciej.poleski@uj.edu.pl>
+ * Copyright 2012  Maciej Poleski
  */
 
 #ifndef CLIENTTOSLAVEREPLY_H

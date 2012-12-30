@@ -1,5 +1,6 @@
 #include "Request.hxx"
 #include "Address.hxx"
+#include "../ConnCS/Post.hxx"
 
 #include <boost/asio/write.hpp>
 #include <boost/asio/read.hpp>
@@ -77,6 +78,13 @@ void writeToSocket(const Address& address, boost::asio::ip::tcp::socket& socket)
     boost::asio::write(socket,boost::asio::buffer(up.b));
 }
 
+void writeToSocket(byte b, boost::asio::ip::tcp::socket& socket)
+{
+    byte v[1]= {b};
+    boost::asio::write(socket,boost::asio::buffer(v),
+                       boost::asio::transfer_exactly(1));
+}
+
 std::uint32_t readUint32FromSocket(boost::asio::ip::tcp::socket& socket)
 {
     return readFromSocket<std::uint32_t>(socket);
@@ -114,4 +122,15 @@ std::string readFromSocket< std::string >(boost::asio::ip::tcp::socket& socket)
     return std::string(rawResult.begin(),rawResult.end());
 }
 
+template<>
+byte readFromSocket< byte >(boost::asio::ip::tcp::socket& socket)
+{
+    byte v[1];
+    boost::asio::read(socket,boost::asio::buffer(v),
+                      boost::asio::transfer_exactly(1));
+    return *v;
+}
+
+
 };
+

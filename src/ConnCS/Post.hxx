@@ -8,6 +8,8 @@
 #include <string>
 #include <boost/asio/ip/tcp.hpp>
 
+#include "../shared/Request.hxx"
+
 /**
  * Obiekty tej klasy przechowują zawartość pojedyńczej wiadomości z danej
  * dyskusji.
@@ -61,6 +63,13 @@ private:
 
 private:
     std::string _message;
+};
+
+namespace detail
+{
+    void writeToSocket(const Post &post,boost::asio::ip::tcp::socket &socket);
+    template<>
+    Post readFromSocket<Post>(boost::asio::ip::tcp::socket &socket);
 };
 
 #endif // POST_H
