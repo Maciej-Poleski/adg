@@ -7,6 +7,7 @@ set(SOURCES
     Discussion.cxx
     Changeset.cxx
     Database.cxx
+    ClientRequest.cxx
     main.cxx)
 
 add_executable(slave ${SOURCES})

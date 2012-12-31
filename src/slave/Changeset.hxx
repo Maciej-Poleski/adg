@@ -8,6 +8,7 @@
 #include <map>
 
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/map.hpp>
 
 #include "../ConnCS/Post.hxx"
 #include "../shared/Request.hxx"

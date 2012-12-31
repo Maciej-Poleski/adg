@@ -5,16 +5,30 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include <unordered_map>
+#include <map>
+#include <mutex>
 
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/map.hpp>
 
 #include "../shared/Request.hxx"
 #include "Discussion.hxx"
 
+/**
+ * Obiekt bazy danych Slave.
+ */
 class Database
 {
     friend boost::serialization::access;
+
+public:
+    /**
+     * Tworzy nową dyskusję w tym Slave
+     *
+     * @param id ID nowej dyskusji (musi być koniecznie to)
+     * @param name nazwa nowej dyskusji
+     */
+    void createNewDiscussion(DiscussionId id, std::string name);
 
 private:
     template<class Action>
@@ -24,8 +38,11 @@ private:
     }
 
 private:
-    std::unordered_map<DiscussionId,Discussion> _discussions;
+    std::map<DiscussionId,Discussion> _discussions;
     DiscussionId _nextDiscussionId=1;
+    std::mutex _bigDatabaseLock;
 };
+
+extern Database database;
 
 #endif // DATABASE_H
