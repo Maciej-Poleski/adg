@@ -6,7 +6,9 @@
 #define POST_H
 
 #include <string>
+
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/serialization/access.hpp>
 
 #include "../shared/Request.hxx"
 
@@ -16,6 +18,7 @@
  */
 class Post final
 {
+    friend boost::serialization::access;
 public:
     /**
      * Tworzy pustą wiadomości.
@@ -60,6 +63,12 @@ public:
 private:
     void checkMessage() const;
     void checkAll() const;
+
+    template<class Action>
+    void serialize(Action &ar, const unsigned int version)
+    {
+        ar & _message;
+    }
 
 private:
     std::string _message;

@@ -1,9 +1,13 @@
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.52 REQUIRED system)
+find_package(Boost 1.52 REQUIRED serialization system)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-set(SOURCES main.cxx)
+set(SOURCES
+    Discussion.cxx
+    Changeset.cxx
+    Database.cxx
+    main.cxx)
 
 add_executable(slave ${SOURCES})
 

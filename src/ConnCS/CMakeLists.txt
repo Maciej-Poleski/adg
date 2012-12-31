@@ -1,5 +1,5 @@
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.52 REQUIRED system)
+find_package(Boost 1.52 REQUIRED serialization)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
