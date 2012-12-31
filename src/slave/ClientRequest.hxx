@@ -1,5 +1,5 @@
 /*
- * Copyright 2012  Maciej Poleski <maciej.poleski@uj.edu.pl>
+ * Copyright 2012  Maciej Poleski
  */
 
 #ifndef CLIENTREQUEST_H
@@ -11,9 +11,12 @@ extern std::atomic_uint_fast32_t countOfConnectedClients;
 /**
  * Obsługuje żądanie od klienta
  */
-class ClientRequest
+class ClientRequest final
 {
 public:
+    ClientRequest() = delete;
+
+    ~ClientRequest();
     /**
      * Inicjalizuje obiekt
      *

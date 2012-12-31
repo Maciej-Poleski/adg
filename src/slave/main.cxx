@@ -17,8 +17,6 @@
 #include "../shared/Request.hxx"
 #include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
 #include "../ConnMS/MasterToSlaveReplyNewDiscussion.hxx"
-#include "../ConnCS/ClientToSlaveRequest.hxx"
-#include "../ConnCS/ClientToSlaveReply.hxx"
 
 Database database;
 static std::atomic_bool stopServer(false);

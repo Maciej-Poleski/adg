@@ -30,6 +30,27 @@ public:
      */
     void createNewDiscussion(DiscussionId id, std::string name);
 
+    /**
+     * Dodaje wiadomości do dyskusji
+     *
+     * @param post wiadomości którę zostaną dodane
+     * @param id ID dyskusji do której zostaną dodane wiadomości
+     * @return wersja dyskusji po dodaniu wiadomości oraz lista ID nowych
+     * wiadomości (0 jeżeli nie udało się)
+     */
+    std::pair<DiscussionVersion,std::vector<PostId>>
+            addPostsToDiscussion(const std::vector<Post>& posts, DiscussionId id);
+
+    /**
+     * Przygotowuje aktualizacje dla klienta
+     *
+     * @param id ID dyskusji do aktualizacji
+     * @param version wersja dyskusji do aktualizacji
+     * @return przygotowana aktualizacja
+     */
+    std::pair<DiscussionVersion,std::vector<std::pair<PostId,Post>>>
+    prepareUpdate(DiscussionId id, DiscussionVersion version);
+
 private:
     template<class Action>
     void serialize(Action &ar, const unsigned int version)
