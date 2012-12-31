@@ -6,6 +6,7 @@
 #include "../ConnCS/ClientToSlaveReply.hxx"
 
 #include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
+#include "../ConnMS/MasterToSlaveReplyNewDiscussion.hxx"
 
 int main(int argc,char**argv)
 {
@@ -16,5 +17,8 @@ int main(int argc,char**argv)
     acceptor.accept(sock);
     MasterToSlaveRequestNewDiscussion req=receiveFrom<MasterToSlaveRequestNewDiscussion>(sock);
     std::cout<<req.id()<<' '<<req.name()<<'\n';
+    MasterToSlaveReplyNewDiscussion rep(MasterToSlaveReplyNewDiscussion::fail);
+    sendTo(rep,sock);
+    sock.close();
     return 0;
 }

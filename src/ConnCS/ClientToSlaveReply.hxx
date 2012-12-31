@@ -18,7 +18,7 @@ class ClientToSlaveRequest;
  * Przechowuje aktualizacje dla klienta oraz informacje o zatwierdzonych
  * aktualizacjach wysłanych przez klienta.
  */
-class ClientToSlaveReply
+class ClientToSlaveReply final
 {
 public:
     ClientToSlaveReply();

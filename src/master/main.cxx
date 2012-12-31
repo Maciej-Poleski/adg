@@ -6,6 +6,7 @@
 #include "../ConnCM/ClientToMasterReply.hxx"
 
 #include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
+#include "../ConnMS/MasterToSlaveReplyNewDiscussion.hxx"
 
 int main(int argc,char**argv)
 {
@@ -15,8 +16,9 @@ int main(int argc,char**argv)
     sock.connect(ip::tcp::endpoint(ip::address::from_string("127.0.0.1"),8888));
     MasterToSlaveRequestNewDiscussion req;
     req.setId(22);
-    //req.setName("");
+    req.setName("name");
     sendTo(req,sock);
-    sock.close();
+    MasterToSlaveReplyNewDiscussion rep=receiveFrom<MasterToSlaveReplyNewDiscussion>(sock);
+    std::cout<<rep.result()<<'\n';
     return 0;
 }

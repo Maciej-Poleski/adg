@@ -5,6 +5,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 set(SOURCES
     MasterToSlaveRequestNewDiscussion.cxx
+    MasterToSlaveReplyNewDiscussion.cxx
 )
 
 add_library(ConnMS ${SOURCES})

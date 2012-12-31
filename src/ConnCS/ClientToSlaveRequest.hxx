@@ -19,7 +19,7 @@
  * Przechowuje żądanie klienta da Slave. Pozwala na jego wysłanie oraz
  * odebranie.
  */
-class ClientToSlaveRequest
+class ClientToSlaveRequest final
 {
 public:
     /**

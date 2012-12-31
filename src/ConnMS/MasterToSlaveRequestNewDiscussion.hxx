@@ -14,7 +14,7 @@
 /**
  * Żądanie Mastera do Slave o uworzenie nowej dyskusji o zadanym ID
  */
-class MasterToSlaveRequestNewDiscussion
+class MasterToSlaveRequestNewDiscussion final
 {
     friend boost::serialization::access;
 public:

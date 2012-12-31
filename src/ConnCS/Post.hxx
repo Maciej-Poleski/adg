@@ -14,7 +14,7 @@
  * Obiekty tej klasy przechowują zawartość pojedyńczej wiadomości z danej
  * dyskusji.
  */
-class Post
+class Post final
 {
 public:
     /**
