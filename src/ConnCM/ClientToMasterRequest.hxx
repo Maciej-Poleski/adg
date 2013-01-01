@@ -61,7 +61,7 @@ public:
     /**
      * @return numer wersji listy dyskusji po stronie klienta
      */
-    std::uint32_t discussionListVersion() const;
+    DiscussionListVersion discussionListVersion() const;
 
     /**
      * @return Lista nowych dyskusji do utworzenia
@@ -71,7 +71,7 @@ public:
     /**
      * @return Lista dyskusji do synchronizacji
      */
-    const std::vector< uint32_t >& discussionsToSynchronization() const;
+    const std::vector< DiscussionId >& discussionsToSynchronization() const;
 
 private:
     ClientToMasterRequest();
@@ -80,9 +80,9 @@ private:
     /// Lista nowych dyskusji które klient chce utworzyć
     std::vector<std::string> _newDiscussions;
     /// Wersja listy dyskusji po stronie klienta
-    std::uint32_t _discussionListVersion;
+    DiscussionListVersion _discussionListVersion;
     /// Lista identyfikatorów dyskusji które klient chce zsynchronizować
-    std::vector<std::uint32_t> _discussionsToSynchronization;
+    std::vector<DiscussionId> _discussionsToSynchronization;
 
 };
 

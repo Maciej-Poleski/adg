@@ -11,10 +11,10 @@
 #include <boost/asio/write.hpp>
 #include <boost/asio/read.hpp>
 
-ClientToMasterRequest::ClientToMasterRequest(uint32_t discussionListVersion)
-    : _discussionListVersion(discussionListVersion)
+ClientToMasterRequest::ClientToMasterRequest(DiscussionListVersion version)
+    : _discussionListVersion(version)
 {
-    if(discussionListVersion==0)
+    if(version==0)
         throw std::logic_error("Version of discussion list can not be 0");
 }
 
@@ -23,11 +23,11 @@ ClientToMasterRequest::ClientToMasterRequest()
 
 }
 
-std::uint32_t ClientToMasterRequest::addDiscussionToSynchronize(std::uint32_t discussionId)
+std::uint32_t ClientToMasterRequest::addDiscussionToSynchronize(DiscussionId id)
 {
-    if(discussionId==0)
+    if(id==0)
         throw std::logic_error("Discussion ID can not be 0");
-    _discussionsToSynchronization.push_back(discussionId);
+    _discussionsToSynchronization.push_back(id);
     return _discussionsToSynchronization.size()-1;
 }
 
@@ -39,7 +39,7 @@ uint32_t ClientToMasterRequest::addNewDiscussion(const std::string& discussion)
     return _newDiscussions.size()-1;
 }
 
-uint32_t ClientToMasterRequest::discussionListVersion() const
+DiscussionListVersion ClientToMasterRequest::discussionListVersion() const
 {
     return _discussionListVersion;
 }

@@ -27,9 +27,9 @@ public:
     /**
      * Tworzy odpowiedź o zadanej wersji listy dyskusji
      *
-     * @param discussionListVersion wersja listy dyskusji po stronie Mastera
+     * @param version wersja listy dyskusji po stronie Mastera
      */
-    ClientToMasterReply(std::uint32_t discussionListVersion);
+    ClientToMasterReply(DiscussionListVersion version);
 
     /**
      * Odbiera odpowiedź na podane zapytanie od Mastera i tworzy na jej
@@ -74,19 +74,20 @@ public:
      * @return lista identyfikatorów kolejnych nowo utworzonych dyskusji
      *          (lub 0) wraz z adresami slave odpowiedzialnymi za nie
      */
-    const std::vector<std::pair<std::uint32_t,Address>> & newDiscussions() const;
+    const std::vector<std::pair<DiscussionId,Address>> & newDiscussions() const;
 
     /**
      * @return numer wersji listy dyskusji w tej odpowiedzi
      */
-    const std::uint32_t discussionListVersion() const;
+    const DiscussionListVersion discussionListVersion() const;
 
     /**
      * @return lista identyfikatorów wraz z nazwami dyskusji będących dla
      *          klienta aktualizacją jego listy do wersji podanej w tej
      *          odpowiedzi
      */
-    const std::vector<std::pair<uint32_t,std::string>> & newDiscussionsFromUpdate() const;
+    const std::vector<std::pair<DiscussionId,std::string>> &
+            newDiscussionsFromUpdate() const;
 
     /**
      * @return lista slave odpowiedzialnych za odpowiednie dyskusje z żądania
@@ -98,8 +99,10 @@ public:
      * Wysyła tą odpowiedź
      *
      * @param socket gniazdo na które zostanie wysłana ta odpowiedź
+     * @param request żądanie na które zostanie wysłana ta odpowiedź
      */
-    void sendTo(boost::asio::ip::tcp::socket &socket) const;
+    void sendTo(boost::asio::ip::tcp::socket &socket,
+                const ClientToMasterRequest& request) const;
 
     /**
      * Wysyła informację o użyciu przez klienta nieobsługiwanej wersji
@@ -113,9 +116,9 @@ private:
     ClientToMasterReply();
 
 private:
-    std::vector<std::pair<std::uint32_t,Address>> _newDiscussions;
-    std::uint32_t _discussionListVersion;
-    std::vector<std::pair<uint32_t,std::string>> _newDiscussionsFromUpdate;
+    std::vector<std::pair<DiscussionId,Address>> _newDiscussions;
+    DiscussionListVersion _discussionListVersion;
+    std::vector<std::pair<DiscussionId,std::string>> _newDiscussionsFromUpdate;
     std::vector<Address> _discussionsToSynchronization;
 
 };

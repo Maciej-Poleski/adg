@@ -9,14 +9,14 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-#include <boost/asio.hpp>
-
-#include "Database.hxx"
-#include "ClientRequest.hxx"
+#include <boost/asio/ip/tcp.hpp>
 
 #include "../shared/Request.hxx"
 #include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
 #include "../ConnMS/MasterToSlaveReplyNewDiscussion.hxx"
+
+#include "Database.hxx"
+#include "ClientRequest.hxx"
 
 Database database;
 static std::atomic_bool stopServer(false);

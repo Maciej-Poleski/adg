@@ -60,7 +60,8 @@ const std::vector< Address >& ClientToMasterReply::discussionsToSynchronization(
     return _discussionsToSynchronization;
 }
 
-void ClientToMasterReply::sendTo(boost::asio::ip::tcp::socket& socket) const
+void ClientToMasterReply::sendTo(boost::asio::ip::tcp::socket& socket,
+                                 const ClientToMasterRequest& request) const
 {
     using namespace detail;
     {
@@ -74,12 +75,24 @@ void ClientToMasterReply::sendTo(boost::asio::ip::tcp::socket& socket) const
             writeToSocket(o.second,socket);
     }
     writeToSocket(_discussionListVersion,socket);
-    writeToSocket(static_cast<std::uint32_t>(_newDiscussionsFromUpdate.size()),
-                  socket);
-    for(const auto o : _newDiscussionsFromUpdate)
+    if(_discussionListVersion>request.discussionListVersion())
     {
-        writeToSocket(o.first,socket);
-        writeToSocket(o.second,socket);
+        writeToSocket(static_cast<std::uint32_t>(_newDiscussionsFromUpdate.size()),
+                      socket);
+        for(const auto o : _newDiscussionsFromUpdate)
+        {
+            writeToSocket(o.first,socket);
+            writeToSocket(o.second,socket);
+        }
+    }
+    else if(_discussionListVersion==request.discussionListVersion())
+    {
+        // nothing to do
+    }
+    else
+    {
+        throw std::logic_error("Client has incorrect version of discussions"
+                               "list");
     }
     for(const auto o : _discussionsToSynchronization)
     {
