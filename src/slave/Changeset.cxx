@@ -6,24 +6,18 @@
 
 #include "Discussion.hxx"
 
-Changeset::Changeset() : _parentDiscussion(nullptr)
+Changeset::Changeset()
 {
 
 }
 
-
-Changeset::Changeset(Discussion* parentDiscussion) :
-    _parentDiscussion(parentDiscussion)
-{
-    assert(parentDiscussion!=nullptr);
-}
-
-std::vector< PostId > Changeset::addPosts(const std::vector< Post > &posts)
+std::vector< PostId > Changeset::addPosts(const std::vector< Post > &posts,
+        const std::function<PostId()> &idGenerator)
 {
     std::vector<PostId> result;
     for(const auto post : posts)
     {
-        PostId id=_parentDiscussion->nextPostId();
+        PostId id=idGenerator();
         _changes[id]=post; // na tym etapie wiadomo że się uda
         result.push_back(id);
     }

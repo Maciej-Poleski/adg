@@ -4,6 +4,8 @@
 
 #include "Discussion.hxx"
 
+#include <functional>
+
 #include "../shared/Request.hxx"
 
 void Discussion::setName(const std::string& name)
@@ -18,8 +20,8 @@ Discussion::addPosts(const std::vector< Post >& posts)
     DiscussionVersion newVersion=2;
     if(!_discussion.empty())
         newVersion=_discussion.rbegin()->first+1;
-    Changeset changeset(this);
-    auto ids=changeset.addPosts(posts);
+    Changeset changeset;
+    auto ids=changeset.addPosts(posts,std::bind(&Discussion::nextPostId,this));
     _discussion[newVersion]=std::move(changeset);
     return std::make_pair(newVersion,ids);
 }

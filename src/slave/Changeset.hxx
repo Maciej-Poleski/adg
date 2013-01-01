@@ -6,6 +6,7 @@
 #define CHANGESET_H
 
 #include <map>
+#include <functional>
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/map.hpp>
@@ -23,26 +24,19 @@ class Changeset
     friend boost::serialization::access;
 
 public:
-    /**
-     * Konstruktor domyślny aby spełnić wymóg DefaultConstructible. Jego
-     * używanie nie ma sensu.
-     */
     Changeset();
-
-    /**
-     * @param parentDiscussion dyskusja której elementem jest ten zestaw
-     * zmian
-     */
-    Changeset(Discussion *parentDiscussion);
 
     /**
      * Dodaje listę wiadomości do tego zestawu zmian
      *
      * @param posts wiadomości które zostaną dodane
+     * @param idGenerator generator który zostanie wykorzystany do
+     *          przydzielenia identyfikatorów dla nowych wiadomości
      * @return lista identyfikatorów dodanych wiadomości (lub 0 jeżeli nie
      * udało się dodać danej wiadomości)
      */
-    std::vector< PostId >  addPosts(const std::vector< Post >& posts);
+    std::vector< PostId >  addPosts(const std::vector< Post >& posts,
+                                    const std::function<PostId()> &idGenerator);
 
     /**
      * @return wszystkie wiadomości z tego zbioru zmian w kolejności rosnących
@@ -54,12 +48,11 @@ private:
     template<class Action>
     void serialize(Action &ar,const unsigned int version)
     {
-        ar & _changes & _parentDiscussion;
+        ar & _changes;
     }
 
 private:
     std::map<PostId,Post> _changes;
-    Discussion* _parentDiscussion;
 };
 
 #endif // CHANGESET_H
