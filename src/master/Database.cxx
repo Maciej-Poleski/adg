@@ -9,7 +9,12 @@
 
 #include <boost/asio/ip/tcp.hpp>
 
+#include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
+#include "../ConnMS/MasterToSlaveReplyNewDiscussion.hxx"
+
 Database database;
+
+extern boost::asio::io_service io_service;
 
 std::vector< std::pair< DiscussionId, Address > >
 Database::createNewDiscussions(std::vector< std::string > newDiscussions)
@@ -22,14 +27,64 @@ Database::createNewDiscussions(std::vector< std::string > newDiscussions)
     {
         auto slave=selectSlave();
         // forwardować do wybranego slave....
-        DiscussionId id=_nextDiscussionId++;
-        collectedIds.push_back(id);
-        _discussionSlaves[id]=slave;
-        _discussionNames[id]=name;
-        result.push_back(std::make_pair(id,slave));
+        try
+        {
+            boost::asio::ip::tcp::socket socket(io_service);
+            socket.connect(slave);
+            MasterToSlaveRequestNewDiscussion req;
+            DiscussionId id=_nextDiscussionId++;
+            req.setId(id);
+            req.setName(name);
+            sendTo(req,socket); // may fail
+            auto rep=receiveFrom<MasterToSlaveReplyNewDiscussion>(socket);
+            rep.check(); // may fail ^
+            if(rep.result()!=decltype(rep)::ok)
+                throw std::logic_error("Slave notified error");
+            collectedIds.push_back(id);
+            _discussionSlaves[id]=slave;
+            _discussionNames[id]=name;
+            result.push_back(std::make_pair(id,slave));
+        }
+        catch(...)
+        {
+            result.push_back(std::make_pair(0,slave));
+        }
     }
-    _discussionListVersionChangeset[newVersion]=std::move(collectedIds);
+    if(!collectedIds.empty())
+        _discussionListVersionChangeset[newVersion]=std::move(collectedIds);
+    else
+    {
+        --_nextDiscussionListVersion; // roll back change
+    }
     return result;
+}
+
+std::vector< std::pair< DiscussionId, std::string > >
+Database::getUpdates(DiscussionListVersion version)
+{
+    checkDiscussionListVersion(version);
+    std::lock_guard<std::mutex> lock(_bigDatabaseLock);
+    std::vector< std::pair< DiscussionId, std::string > > result;
+    if(version>=_nextDiscussionListVersion)
+        throw std::logic_error("This version number is not correct");
+    for(auto i=_discussionListVersionChangeset.find(version+1);
+            i!=_discussionListVersionChangeset.end();
+            ++i)
+        for(const auto ii : i->second)
+        {
+            assert(_discussionNames.find(ii)!=_discussionNames.end());
+            result.push_back(std::make_pair(ii,_discussionNames[ii]));
+        }
+    return result;
+}
+
+Address Database::getSlave(DiscussionId id)
+{
+    checkDiscussionId(id);
+    std::lock_guard<std::mutex> lock(_bigDatabaseLock);
+    if(_discussionSlaves.find(id)==_discussionSlaves.end())
+        throw std::logic_error("This discussion ID is not correct");
+    return _discussionSlaves[id];
 }
 
 DiscussionListVersion Database::currentDiscussionListVersion() const

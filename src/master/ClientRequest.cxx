@@ -30,8 +30,21 @@ void ClientRequest::dispatch() noexcept
         std::vector<std::pair<DiscussionId,Address>> newDiscussions=
         database.createNewDiscussions(req.newDiscussions());
         ClientToMasterReply rep(database.currentDiscussionListVersion());
-        // impl
-        // send reply
+        for(const auto nd : newDiscussions)
+        {
+            rep.addNewDiscussion(nd.first,nd.second);
+        }
+        {
+            auto update=database.getUpdates(req.discussionListVersion());
+            for(const auto u : update)
+            {
+                rep.addNewDiscussionFromUpdate(u.first,u.second);
+            }
+        }
+        for(const auto d : req.discussionsToSynchronization())
+        {
+            rep.addDiscussionToSynchronization(database.getSlave(d));
+        }
         rep.sendTo(_socket,req);
         _socket.close();
     }

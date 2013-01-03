@@ -49,7 +49,7 @@ public:
      * @param address w razie powodzenia adres slave odpowiedzialnego za
      *          nowo utworzoną dyskusje
      */
-    void addNewDiscussion(std::uint32_t id,const Address &address=Address());
+    void addNewDiscussion(DiscussionId id,const Address &address=Address());
 
     /**
      * Dodaje informacje o nowej dyskusji pochodzącej (z punktu widzenia klienta)
@@ -58,7 +58,7 @@ public:
      * @param id ID nowej dyskusji
      * @param name nazwa nowej dyskusji
      */
-    void addNewDiscussionFromUpdate(std::uint32_t id, const std::string &name);
+    void addNewDiscussionFromUpdate(DiscussionId id, const std::string &name);
 
     /**
      * Dodaje informacje o slave odpowiedzialnym za odpowiednią dyskusje

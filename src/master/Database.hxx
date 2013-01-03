@@ -34,6 +34,20 @@ public:
             createNewDiscussions(std::vector< std::string > newDiscussions);
 
     /**
+     * Tworzy listę nowych dyskusji dodanych do listy dyskusji po wersji version
+     *
+     * @param version Wersja listy dyskusji po stronie klienta
+     * @return lista identyfikatorów dyskusji i nazw dyskusji
+     */
+    std::vector<std::pair<DiscussionId,std::string>> getUpdates(DiscussionListVersion version);
+
+    /**
+     * @param id ID dyskusji
+     * @return adres slave odpowiedzialnego za daną dyskusje
+     */
+    Address getSlave(DiscussionId id);
+
+    /**
      * @return obecna wersja listy dyskusji
      */
     DiscussionListVersion currentDiscussionListVersion() const;
