@@ -17,6 +17,7 @@
 
 #include "ClientRequest.hxx"
 #include "Database.hxx"
+#include "Console.hxx"
 
 boost::asio::io_service io_service;
 
@@ -56,11 +57,13 @@ void startClientServer()
     }
 }
 
-void startStopServer()
+void startStopServer(const std::string &param)
 {
-    std::string ignore;
-    std::getline(std::cin,ignore);
-    std::clog<<"Graceful stop...\n";
+    Console console;
+    if(!param.empty())
+        console.executeFile(param);
+    console.runInteractive();
+    std::clog<<"Graceful stop...\nIgnore errors below\n";
     stopServer=true;
     try
     {
@@ -77,9 +80,9 @@ void startStopServer()
 
 int main(int argc,char**argv)
 {
-    if(argc!=2)
+    if(argc!=2 && argc!=3)
     {
-        std::cerr<<argv[0]<<" [client port]\n";
+        std::cerr<<argv[0]<<" [client port] [[config]]\n";
         return 1;
     }
     {
@@ -97,7 +100,7 @@ int main(int argc,char**argv)
     }
     clientServerPort=std::stoul(argv[1]);
     std::thread clientServerThread(startClientServer);
-    startStopServer();
+    startStopServer(argc>=3?argv[2]:"");
     clientServerThread.join();
     while(countOfConnectedClients!=0)
     {

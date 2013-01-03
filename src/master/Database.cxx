@@ -30,7 +30,7 @@ Database::createNewDiscussions(std::vector< std::string > newDiscussions)
         try
         {
             boost::asio::ip::tcp::socket socket(io_service);
-            socket.connect(slave);
+            socket.connect(slave.second);
             MasterToSlaveRequestNewDiscussion req;
             DiscussionId id=_nextDiscussionId++;
             req.setId(id);
@@ -41,13 +41,13 @@ Database::createNewDiscussions(std::vector< std::string > newDiscussions)
             if(rep.result()!=decltype(rep)::ok)
                 throw std::logic_error("Slave notified error");
             collectedIds.push_back(id);
-            _discussionSlaves[id]=slave;
+            _discussionSlaves[id]=slave.first;
             _discussionNames[id]=name;
-            result.push_back(std::make_pair(id,slave));
+            result.push_back(std::make_pair(id,slave.first));
         }
         catch(...)
         {
-            result.push_back(std::make_pair(0,slave));
+            result.push_back(std::make_pair(0,slave.first));
         }
     }
     if(!collectedIds.empty())
@@ -92,17 +92,20 @@ DiscussionListVersion Database::currentDiscussionListVersion() const
     return _nextDiscussionListVersion-1;
 }
 
-void Database::registerSlave(const Address& address)
+void Database::registerSlave(const Address& clientAddress,
+                             const Address &masterAddress)
 {
     std::lock_guard<std::mutex> lock(_slavesLock);
-    _slaves.push_back(address);
+    _slaves.push_back(clientAddress);
+    _slavesForMaster.push_back(masterAddress);
 }
 
-Address Database::selectSlave()
+std::pair<Address,Address> Database::selectSlave()
 {
     static std::mt19937 engine(404);
     std::lock_guard<std::mutex> lock(_slavesLock);
     std::uniform_int_distribution<std::size_t> dist(0,_slaves.size()-1);
     auto gen=std::bind(dist,engine);
-    return _slaves[gen()];
+    auto r=gen();
+    return std::make_pair(_slaves[r],_slavesForMaster[r]);
 }

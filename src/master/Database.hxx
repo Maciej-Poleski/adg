@@ -43,7 +43,7 @@ public:
 
     /**
      * @param id ID dyskusji
-     * @return adres slave odpowiedzialnego za daną dyskusje
+     * @return adres slave odpowiedzialnego za daną dyskusje dla klienta
      */
     Address getSlave(DiscussionId id);
 
@@ -55,15 +55,17 @@ public:
     /**
      * Rejestruje nowego Slave w tym Master'ze
      *
-     * @param address adres slave
+     * @param clientAddress adres slave dla klienta
+     * @param masterAddress adres slave dla Mastera
      */
-    void registerSlave(const Address &address);
+    void registerSlave(const Address &clientAddress, const Address &masterAddress);
 
 private:
     /**
      * @return Slave który otrzyma nowe zadanie
+     * (first - klient, second - master)
      */
-    Address selectSlave();
+    std::pair<Address,Address> selectSlave();
 
 private:
     template<class Action>
@@ -71,7 +73,7 @@ private:
     {
         ar & _discussionNames & _discussionSlaves &
         _discussionListVersionChangeset & _nextDiscussionId &
-        _nextDiscussionListVersion & _slaves;
+        _nextDiscussionListVersion & _slaves & _slavesForMaster;
     }
 
 private:
@@ -84,6 +86,7 @@ private:
     std::mutex _bigDatabaseLock;
 
     std::vector<Address> _slaves;
+    std::vector<Address> _slavesForMaster;
     std::mutex _slavesLock;
 
 };
