@@ -10,6 +10,8 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 
+#include "Database.hxx"
+
 void Console::executeFile(const std::string& param)
 {
     std::ifstream in(param);
@@ -120,10 +122,24 @@ void Console::slave(const std::string& param)
 
 void Console::slaveAdd(const std::string& param)
 {
-    //TODO
+    std::string p1,p2,p3;
+    {
+        auto p=splitCommand(param);
+        p1=p.first;
+        p=splitCommand(p.second);
+        p2=p.first;
+        p=splitCommand(p.second);
+        p3=p.first;
+        if(!p.second.empty())
+            throw std::runtime_error(p.second+" parameter is not expected");
+    }
+    std::uint32_t ip=boost::asio::ip::address::from_string(p1).to_v4().to_ulong();
+    std::uint16_t clientPort=std::stoul(p2);
+    std::uint16_t masterPort=std::stoul(p3);
+    database.registerSlave({ip,clientPort},{ip,masterPort});
 }
 
 void Console::slaveDel(const std::string& param)
 {
-    //TODO
+    std::cout<<"Sorry unimplemented (is it really what you want to do?)\n";
 }

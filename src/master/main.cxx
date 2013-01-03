@@ -112,10 +112,12 @@ int main(int argc,char**argv)
             break;
     }
     {
+        std::cout<<"Saving database...\n";
         std::ofstream dbostream("database.bin");
         boost::archive::binary_oarchive dboarchive(dbostream);
         dboarchive<<database;
         dbostream.close();
+        std::cout<<"Done\n";
     }
     return 0;
 }
