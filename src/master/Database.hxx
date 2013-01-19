@@ -18,7 +18,7 @@
 /**
  * Obiekt bazy danych Mastera
  */
-class Database
+class Database final
 {
     friend boost::serialization::access;
 

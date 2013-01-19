@@ -3,7 +3,10 @@ find_package(Boost 1.52 REQUIRED system)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-set(SOURCES main.cxx)
+set(SOURCES
+    DiscussionList.cxx
+    Database.cxx
+    main.cxx)
 
 add_executable(client ${SOURCES})
 
