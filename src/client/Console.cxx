@@ -140,13 +140,6 @@ void Console::list(const std::string& param)
 
 void Console::discussion(const std::string& param)
 {
-    std::string p1;
-    {
-        auto p=splitCommand(param);
-        p1=p.first;
-        if(!p.second.empty())
-            throw std::runtime_error(p.second+" parameter is not expected");
-    }
     database.createNewDiscussion(param);
 }
 

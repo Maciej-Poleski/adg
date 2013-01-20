@@ -71,7 +71,7 @@ private:
 
 private:
     // STATE
-    DiscussionListVersion _discussionListVersion;
+    DiscussionListVersion _discussionListVersion=1;
     std::map<DiscussionId,std::string> _discussionNames;
     std::map<DiscussionId,DiscussionVersion> _discussionVersions;
     std::map<DiscussionId,std::vector<Post>> _discussions;

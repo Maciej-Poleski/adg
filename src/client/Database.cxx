@@ -130,10 +130,13 @@ void Database::listDiscussions(std::ostream& out) const
     {
         out<<"  "<<std::setw(3)<<o.first<<o.second<<'\n';
     }
-    out<<"New discussions:\n";
-    for(const auto o : _newDiscussions)
+    if(_newDiscussions.empty()==false)
     {
-        out<<o<<'\n';
+        out<<"New discussions:\n";
+        for(const auto o : _newDiscussions)
+        {
+            out<<o<<'\n';
+        }
     }
 }
 
