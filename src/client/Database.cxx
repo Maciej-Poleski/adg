@@ -4,6 +4,8 @@
 
 #include "Database.hxx"
 
+#include <iomanip>
+
 #include <boost/asio/ip/tcp.hpp>
 
 #include "../ConnCM/ClientToMasterRequest.hxx"
@@ -11,11 +13,16 @@
 #include "../ConnCS/ClientToSlaveRequest.hxx"
 #include "../ConnCS/ClientToSlaveReply.hxx"
 
-
 extern boost::asio::io_service io_service;
+
+Database database;
 
 void Database::performSynchronization()
 {
+    if(!_masterSet)
+    {
+        throw std::logic_error("You must set master before synchronization");
+    }
     ClientToMasterRequest req(_discussionListVersion);
     for(const auto d : _newDiscussions)
         req.addNewDiscussion(d);
@@ -69,6 +76,7 @@ void Database::performSynchronization()
 void Database::setMaster(const Address& address)
 {
     _master=address;
+    _masterSet=true;
 }
 
 void Database::synchronizeDiscussion(DiscussionId discussion,
@@ -96,6 +104,60 @@ void Database::synchronizeDiscussion(DiscussionId discussion,
     for(const auto id : rep.commited())
         if(id==0)
             throw std::logic_error("Partial success on client side is not"
-                " implemented yet"
-            );
+                                   " implemented yet"
+                                  );
+}
+
+void Database::addNewPostToDiscussion(const Post& post, DiscussionId discussion)
+{
+    checkDiscussionId(discussion);
+    if(_discussionNames.find(discussion)==_discussionNames.end())
+        throw std::runtime_error("There is not discussion "+
+                                 std::to_string(discussion));
+    _newPosts[discussion].push_back(post);
+}
+
+void Database::createNewDiscussion(const std::string& name)
+{
+    checkDiscussionName(name);
+    _newDiscussions.push_back(name);
+}
+
+void Database::listDiscussions(std::ostream& out) const
+{
+    out<<"Discussions in Discussion Group:\n";
+    for(const auto o : _discussionNames)
+    {
+        out<<"  "<<std::setw(3)<<o.first<<o.second<<'\n';
+    }
+    out<<"New discussions:\n";
+    for(const auto o : _newDiscussions)
+    {
+        out<<o<<'\n';
+    }
+}
+
+void Database::printDiscussion(DiscussionId discussion,std::ostream &out)
+{
+    checkDiscussionId(discussion);
+    if(_discussionNames.find(discussion)==_discussionNames.end())
+        throw std::runtime_error("There is not discussion "+
+                                 std::to_string(discussion));
+    if(_discussions[discussion].empty()==false)
+    {
+        out<<"Posts in Discussion Group:\n";
+        for(const auto o : _discussions[discussion])
+        {
+            out<<'\n'<<o.message()<<'\n';
+        }
+    }
+    if(_newPosts.find(discussion)!=_newPosts.end() &&
+            _newPosts[discussion].empty()==false)
+    {
+        out<<"Local Posts:\n";
+        for(const auto o : _newPosts[discussion])
+        {
+            out<<'\n'<<o.message()<<'\n';
+        }
+    }
 }

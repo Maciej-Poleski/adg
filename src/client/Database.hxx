@@ -24,6 +24,7 @@ class Database final
 {
     friend boost::serialization::access;
 
+public:
     /**
      * Synchronizuje klienta zgodnie z założeniami projektowymi
      */
@@ -33,6 +34,28 @@ class Database final
      * Wprowadza informacje o adresie Master'a
      */
     void setMaster(const Address &address);
+
+    /**
+     * Wyświetla listę dyskusji
+     *
+     * @param out strumień do którego zostania zapisana lista
+     */
+    void listDiscussions(std::ostream &out) const;
+
+    /**
+     * Wyświatla wybraną dyskusje
+     */
+    void printDiscussion(DiscussionId discussion, std::ostream& out);
+
+    /**
+     * Tworzy nową dyskusje
+     */
+    void createNewDiscussion(const std::string &name);
+
+    /**
+     * Dodaje nową wiadomość do istniejącej dyskusji
+     */
+    void addNewPostToDiscussion(const Post &post,DiscussionId discussion);
 
 private:
     void synchronizeDiscussion(DiscussionId discussion, const Address& slave);
@@ -54,6 +77,7 @@ private:
     std::map<DiscussionId,std::vector<Post>> _discussions;
 
     Address _master;
+    bool _masterSet=false;
 
     // TASKS
     std::vector<std::string> _newDiscussions;
@@ -61,5 +85,7 @@ private:
     // TODO: post for discussions without assigned ID's (not yet sent to Master)
     // std::vector<DiscussionId> _discussionsToSynchronization; // just sync everything
 };
+
+extern Database database;
 
 #endif // DATABASE_H

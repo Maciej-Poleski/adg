@@ -4,8 +4,8 @@ find_package(Boost 1.52 REQUIRED system)
 include_directories(${Boost_INCLUDE_DIRS})
 
 set(SOURCES
-    DiscussionList.cxx
     Database.cxx
+    Console.cxx
     main.cxx)
 
 add_executable(client ${SOURCES})
