@@ -22,7 +22,7 @@ ClientRequest::~ClientRequest()
     --countOfConnectedClients;
 }
 
-void ClientRequest::dispatch() noexcept
+void ClientRequest::dispatch(std::shared_ptr< ClientRequest > handle) noexcept
 {
     try
     {

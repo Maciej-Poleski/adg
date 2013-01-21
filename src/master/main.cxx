@@ -39,8 +39,8 @@ void startClientServer()
             acceptor.accept(socket);
             try
             {
-                ClientRequest dispatcher(std::move(socket));
-                std::thread t(&ClientRequest::dispatch,std::ref(dispatcher));
+                std::shared_ptr<ClientRequest> dispatcher(new ClientRequest(std::move(socket)));
+                std::thread t(&ClientRequest::dispatch,dispatcher.get(),dispatcher);
                 t.detach();
             }
             catch(...)

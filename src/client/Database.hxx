@@ -64,7 +64,7 @@ private:
     void serialize(Action & ar,const unsigned int version)
     {
         ar & _discussionListVersion & _discussionNames & _discussionVersions &
-        _discussions & _newDiscussions & _newPosts;
+        _discussions & _newDiscussions & _newPosts & _masterSet & _master;
 
         // ar & _discussionsToSynchronization;
     }

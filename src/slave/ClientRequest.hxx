@@ -4,6 +4,9 @@
 
 #ifndef CLIENTREQUEST_H
 #define CLIENTREQUEST_H
+
+#include <memory>
+
 #include <boost/asio/ip/tcp.hpp>
 
 extern std::atomic_uint_fast32_t countOfConnectedClients;
@@ -28,7 +31,7 @@ public:
     /**
      * Wykonuje wszystkie działania związane z obsługą żądania
      */
-    void dispatch() noexcept;
+    void dispatch(std::shared_ptr<ClientRequest> handle) noexcept;
 
 private:
     boost::asio::ip::tcp::socket _socket;

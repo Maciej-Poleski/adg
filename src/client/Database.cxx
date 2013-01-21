@@ -128,7 +128,7 @@ void Database::listDiscussions(std::ostream& out) const
     out<<"Discussions in Discussion Group:\n";
     for(const auto o : _discussionNames)
     {
-        out<<"  "<<std::setw(3)<<o.first<<o.second<<'\n';
+        out<<std::setw(4)<<o.first<<"  "<<o.second<<'\n';
     }
     if(_newDiscussions.empty()==false)
     {
@@ -157,7 +157,7 @@ void Database::printDiscussion(DiscussionId discussion,std::ostream &out)
     if(_newPosts.find(discussion)!=_newPosts.end() &&
             _newPosts[discussion].empty()==false)
     {
-        out<<"Local Posts:\n";
+        out<<"\nLocal Posts:\n";
         for(const auto o : _newPosts[discussion])
         {
             out<<'\n'<<o.message()<<'\n';

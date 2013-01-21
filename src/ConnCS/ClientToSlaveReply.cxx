@@ -126,6 +126,20 @@ void ClientToSlaveReply::sendTo(boost::asio::ip::tcp::socket& socket,
     }
 }
 
+namespace std
+{
+template<>
+struct hash<pair<uint32_t,uint32_t>>
+{
+    size_t operator()(const pair<uint32_t,uint32_t> &o) const
+    {
+        auto l=static_cast<size_t>(o.first);
+        auto r=static_cast<size_t>(o.second);
+        return (l<<32) | r;
+    }
+};
+}
+
 ClientToSlaveReply ClientToSlaveReply::receiveFrom(
     boost::asio::ip::tcp::socket& socket,
     const ClientToSlaveRequest& request)
@@ -133,6 +147,7 @@ ClientToSlaveReply ClientToSlaveReply::receiveFrom(
     using namespace detail;
     ClientToSlaveReply result;
     std::unordered_multimap<DiscussionId,PostId> set;
+    std::unordered_map<std::pair<DiscussionId,PostId>,Post> sentPosts;
     {
         std::size_t count=0;
         for(const auto o : request.discussionsToCommit())
@@ -150,6 +165,7 @@ ClientToSlaveReply ClientToSlaveReply::receiveFrom(
                 if(id!=0)
                 {
                     set.insert( {discussion,id});
+                    sentPosts[std::make_pair(discussion,id)]=post;
                 }
             }
         }
@@ -174,7 +190,13 @@ ClientToSlaveReply ClientToSlaveReply::receiveFrom(
                     return o.second==id;
                 }
                                )==set.cend(set.bucket(discussion)))
-                post=readFromSocket<Post>(socket);
+                {
+                    post=readFromSocket<Post>(socket);
+                }
+                else
+                {
+                    post=sentPosts[std::make_pair(discussion,id)];
+                }
                 update.push_back(std::make_pair(id,std::move(post)));
             }
             result.addPreparedUpdate(version,std::move(update));
