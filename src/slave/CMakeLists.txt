@@ -15,3 +15,5 @@ add_executable(slave ${SOURCES})
 set_target_properties(slave PROPERTIES COMPILE_FLAGS "-std=c++11")
 
 target_link_libraries(slave ${Boost_LIBRARIES} ConnCS ConnMS shared)
+
+install(TARGETS slave RUNTIME DESTINATION slave/bin)

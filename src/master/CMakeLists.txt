@@ -14,3 +14,5 @@ add_executable(master ${SOURCES})
 set_target_properties(master PROPERTIES COMPILE_FLAGS "-std=c++11")
 
 target_link_libraries(master ${Boost_LIBRARIES} ConnCM ConnMS shared)
+
+install(TARGETS master RUNTIME DESTINATION master/bin)
