@@ -29,7 +29,9 @@ Discussion::addPosts(const std::vector< Post >& posts)
 std::pair< DiscussionVersion, std::vector< std::pair< PostId, Post > > >
 Discussion::prepareUpdate(DiscussionVersion version)
 {
-    DiscussionVersion newVersion=_discussion.rbegin()->first;
+    DiscussionVersion newVersion=1;
+    if(!_discussion.empty())
+        newVersion=_discussion.rbegin()->first;
     std::vector<std::pair<PostId,Post>> posts;
     if(version!=newVersion)
     {
