@@ -62,7 +62,7 @@ void startStopServer(const std::string &param)
     if(!param.empty())
         console.executeFile(param);
     console.runInteractive();
-    std::clog<<"Graceful stop...\nIgnore errors below\n";
+    std::clog<<"Graceful stop...\n";
     stopServer=true;
     try
     {

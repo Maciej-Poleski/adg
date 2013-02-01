@@ -51,6 +51,8 @@ void startClientServer(boost::asio::io_service &io)
             // W przypadku tego protokołu komunikacyjnego takie błędy nie są
             // powodem do obaw.
         }
+        catch(...)
+        {}
     }
 }
 
@@ -86,6 +88,8 @@ void startMasterServer(boost::asio::io_service &io)
             // W przypadku tego protokołu komunikacyjnego takie błędy nie są
             // powodem do obaw.
         }
+        catch(...)
+        {}
     }
 }
 

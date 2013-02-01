@@ -96,8 +96,8 @@ void Console::help(const std::string& )
 {
     std::cout<<"slave add [ip] [client port] [master port]\n"
              <<"slave del [ip] [master port]\n"
-             <<".\n"
-             <<"exec\n"
+             <<". [file name]\n"
+             <<"exec [file name]\n"
              <<"help\n"
              <<"exit\n";
 }
