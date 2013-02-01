@@ -33,7 +33,7 @@ public:
     /**
      * Dodaje wiadomości do dyskusji
      *
-     * @param post wiadomości którę zostaną dodane
+     * @param posts wiadomości którę zostaną dodane
      * @param id ID dyskusji do której zostaną dodane wiadomości
      * @return wersja dyskusji po dodaniu wiadomości oraz lista ID nowych
      * wiadomości (0 jeżeli nie udało się)

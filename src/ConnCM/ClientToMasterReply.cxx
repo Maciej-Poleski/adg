@@ -10,20 +10,20 @@
 
 #include "../shared/Request.hxx"
 
-ClientToMasterReply::ClientToMasterReply(std::uint32_t discussionListVersion)
-    : _discussionListVersion(discussionListVersion)
+ClientToMasterReply::ClientToMasterReply(DiscussionListVersion version)
+    : _discussionListVersion(version)
 {
-    if(discussionListVersion==0)
+    if(version==0)
         throw std::logic_error("Version of discussion list can not be 0");
 }
 
-void ClientToMasterReply::addNewDiscussion(std::uint32_t id,
+void ClientToMasterReply::addNewDiscussion(DiscussionId id,
         const Address& address)
 {
     _newDiscussions.push_back(std::make_pair(id,address));
 }
 
-void ClientToMasterReply::addNewDiscussionFromUpdate(std::uint32_t id,
+void ClientToMasterReply::addNewDiscussionFromUpdate(DiscussionId id,
         const std::string& name)
 {
     if(id==0)
@@ -38,7 +38,7 @@ void ClientToMasterReply::addDiscussionToSynchronization(const Address& address)
     _discussionsToSynchronization.push_back(address);
 }
 
-const std::vector< std::pair< std::uint32_t, Address > >&
+const std::vector< std::pair< DiscussionId, Address > >&
 ClientToMasterReply::newDiscussions() const
 {
     return _newDiscussions;
@@ -49,7 +49,7 @@ const uint32_t ClientToMasterReply::discussionListVersion() const
     return _discussionListVersion;
 }
 
-const std::vector< std::pair< std::uint32_t, std::string > >&
+const std::vector< std::pair< DiscussionId, std::string > >&
 ClientToMasterReply::newDiscussionsFromUpdate() const
 {
     return _newDiscussionsFromUpdate;

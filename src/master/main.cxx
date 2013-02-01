@@ -52,7 +52,6 @@ void startClientServer()
         {
             // W przypadku tego protokołu komunikacyjnego takie błędy nie są
             // powodem do obaw.
-            std::cerr<<e.what()<<'\n';
         }
     }
 }

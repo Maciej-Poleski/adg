@@ -22,10 +22,10 @@ class ClientToMasterRequest final
 {
 public:
     /**
-     * @param discussionListVersion numer wersji listy dyskusyjnej posiadanej
+     * @param version numer wersji listy dyskusyjnej posiadanej
      *          przez klienta
      */
-    ClientToMasterRequest(std::uint32_t discussionListVersion);
+    ClientToMasterRequest(DiscussionListVersion version);
 
     /**
      * Odbiera żądanie od klienta i tworzy na jego podstawie obiekt

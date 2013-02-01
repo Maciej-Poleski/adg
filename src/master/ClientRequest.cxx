@@ -50,7 +50,6 @@ void ClientRequest::dispatch(std::shared_ptr< ClientRequest > handle) noexcept
     }
     catch(const std::exception &e)
     {
-        std::clog<<e.what()<<'\n';
     }
     catch(...)
     {

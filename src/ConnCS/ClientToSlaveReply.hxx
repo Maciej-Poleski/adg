@@ -72,6 +72,7 @@ public:
      * Wysyła odpowiedź
      *
      * @param socket gniazdo do którego zostanie wysłana adpowiedź
+     * @param request żądanie na które wysyłana jest odpowiedź
      */
     void sendTo(boost::asio::ip::tcp::socket& socket, const ClientToSlaveRequest& request);
 
