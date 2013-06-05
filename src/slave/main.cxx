@@ -10,6 +10,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ssl.hpp>
 
 #include "../shared/Request.hxx"
 #include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
@@ -25,20 +26,26 @@ std::atomic_uint_fast32_t countOfConnectedClients(0);
 static std::atomic<std::uint16_t> clientServerPort;
 static std::atomic<std::uint16_t> masterServerPort;
 
-void startClientServer(boost::asio::io_service &io)
+void startClientServer(boost::asio::io_service &io,const std::string &certificate, const std::string &privateKey)
 {
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(),clientServerPort);
     boost::asio::ip::tcp::acceptor acceptor(io,endpoint);
+
+    boost::asio::ssl::context context(boost::asio::ssl::context::tlsv1_server);
+    context.set_options(boost::asio::ssl::context::default_workarounds);
+    context.use_certificate_chain_file(certificate);
+    context.use_private_key_file(privateKey,boost::asio::ssl::context::pem);
+
     while(!stopServer)
     {
         try
         {
-            boost::asio::ip::tcp::socket socket(io);
-            acceptor.accept(socket);
+            auto socket=std::make_shared<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>>(io,context);
+            acceptor.accept(socket->lowest_layer());
             try
             {
-                std::shared_ptr<ClientRequest> dispatcher(new ClientRequest(std::move(socket)));
-                std::thread t(&ClientRequest::dispatch,dispatcher.get(),dispatcher);
+                auto dispatcher=std::make_shared<ClientRequest<decltype(socket)::element_type>>(socket);
+                std::thread t(&ClientRequest<decltype(socket)::element_type>::dispatch,dispatcher.get(),dispatcher);
                 t.detach();
             }
             catch(...)
@@ -56,32 +63,39 @@ void startClientServer(boost::asio::io_service &io)
     }
 }
 
-void startMasterServer(boost::asio::io_service &io)
+void startMasterServer(boost::asio::io_service &io,const std::string &certificate, const std::string &privateKey)
 {
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(),masterServerPort);
     boost::asio::ip::tcp::acceptor acceptor(io,endpoint);
+
+    boost::asio::ssl::context context(boost::asio::ssl::context::tlsv1_server);
+    context.set_options(boost::asio::ssl::context::default_workarounds);
+    context.use_certificate_chain_file(certificate);
+    context.use_private_key_file(privateKey,boost::asio::ssl::context::pem);
+
     while(!stopServer)
     {
         try
         {
-            boost::asio::ip::tcp::socket socket(io);
-            acceptor.accept(socket);
+            auto socket=std::make_shared<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>>(io,context);
+            acceptor.accept(socket->lowest_layer());
             try
             {
+                socket->handshake(boost::asio::ssl::stream_base::server);
                 MasterToSlaveRequestNewDiscussion req=
-                    receiveFrom<MasterToSlaveRequestNewDiscussion>(socket);
+                    receiveFrom<MasterToSlaveRequestNewDiscussion>(*socket);
 
                 database.createNewDiscussion(req.id(),req.name());
 
                 MasterToSlaveReplyNewDiscussion rep(MasterToSlaveReplyNewDiscussion::ok);
-                sendTo(rep,socket);
+                sendTo(rep,*socket);
             }
             catch(...)
             {
                 MasterToSlaveReplyNewDiscussion rep(MasterToSlaveReplyNewDiscussion::fail);
-                sendTo(rep,socket);
+                sendTo(rep,*socket);
             }
-            socket.close();
+            socket->shutdown();
         }
         catch(const std::exception &e)
         {
@@ -125,9 +139,9 @@ void startStopServer(boost::asio::io_service &io)
 
 int main(int argc,char**argv)
 {
-    if(argc!=3)
+    if(argc!=7)
     {
-        std::cerr<<argv[0]<<" [client port] [master port]\n";
+        std::cerr<<argv[0]<<" [client port] [master port] [client cert] [client key] [master cert] [master key]\n";
         return 1;
     }
     {
@@ -146,8 +160,8 @@ int main(int argc,char**argv)
     clientServerPort=std::stoul(argv[1]);
     masterServerPort=std::stoul(argv[2]);
     boost::asio::io_service io_service;
-    std::thread clientServerThread(startClientServer,std::ref(io_service));
-    std::thread masterServerThread(startMasterServer,std::ref(io_service));
+    std::thread clientServerThread(startClientServer,std::ref(io_service),argv[3],argv[4]);
+    std::thread masterServerThread(startMasterServer,std::ref(io_service),argv[5],argv[6]);
     startStopServer(io_service);
     masterServerThread.join();
     clientServerThread.join();

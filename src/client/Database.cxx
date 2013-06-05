@@ -7,6 +7,7 @@
 #include <iomanip>
 
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ssl.hpp>
 
 #include "../ConnCM/ClientToMasterRequest.hxx"
 #include "../ConnCM/ClientToMasterReply.hxx"
@@ -28,9 +29,15 @@ void Database::performSynchronization()
         req.addNewDiscussion(d);
     for(const auto d : _discussionVersions)
         req.addDiscussionToSynchronize(d.first);
-    boost::asio::ip::tcp::socket socket(io_service);
-    socket.connect(_master);
+
+    boost::asio::ssl::context context(boost::asio::ssl::context::tlsv1_client);
+    context.set_options(boost::asio::ssl::context::default_workarounds);
+
+    boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket(io_service,context);
+    socket.lowest_layer().connect(_master);
+    socket.handshake(boost::asio::ssl::stream_base::client);
     req.sendTo(socket);
+
     ClientToMasterReply rep=ClientToMasterReply::receiveFrom(socket,req);
     std::vector<std::string> newDiscussions;
     for(std::size_t i=0; i<_newDiscussions.size(); ++i)
@@ -88,8 +95,14 @@ void Database::synchronizeDiscussion(DiscussionId discussion,
     {
         req.addPostToCommit(discussion,p);
     }
-    boost::asio::ip::tcp::socket socket(io_service);
-    socket.connect(slave);
+
+    boost::asio::ssl::context context(boost::asio::ssl::context::tlsv1_client);
+    context.set_options(boost::asio::ssl::context::default_workarounds);
+
+    boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket(io_service,context);
+    socket.lowest_layer().connect(slave);
+    socket.handshake(boost::asio::ssl::stream_base::client);
+
     req.sendTo(socket);
     ClientToSlaveReply rep=ClientToSlaveReply::receiveFrom(socket,req);
     assert(rep.updates().size()==1);

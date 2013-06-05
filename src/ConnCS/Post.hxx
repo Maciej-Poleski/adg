@@ -31,7 +31,8 @@ public:
      * @param socket gniazdo z którego zostanie odebrana wiadomość
      * @return odebrana wiadomość
      */
-    static Post receiveFrom(boost::asio::ip::tcp::socket &socket);
+    template<class SyncReadStream>
+    static Post receiveFrom(SyncReadStream &socket);
 
     /**
      * Ustawia treść wiadomości
@@ -52,7 +53,8 @@ public:
      *
      * @param socket gniazdo do którego zostanie wysłana wiadomość
      */
-    void sendTo(boost::asio::ip::tcp::socket &socket) const;
+    template<class SyncWriteStream>
+    void sendTo(SyncWriteStream &socket) const;
 
     /**
      * Sprawdza czy obiekt znajduje się w poprawnym stanie z punkty widzenia
@@ -74,11 +76,29 @@ private:
     std::string _message;
 };
 
-namespace detail
+// namespace detail
+// {
+//     void writeToSocket(const Post &post,boost::asio::ip::tcp::socket &socket);
+//     template<>
+//     Post readFromSocket<Post>(boost::asio::ip::tcp::socket &socket);
+// };
+
+template<class SyncWriteStream>
+void Post::sendTo(SyncWriteStream& socket) const
 {
-    void writeToSocket(const Post &post,boost::asio::ip::tcp::socket &socket);
-    template<>
-    Post readFromSocket<Post>(boost::asio::ip::tcp::socket &socket);
-};
+    check();
+    using namespace detail;
+    writeToSocket(_message,socket);
+}
+
+template<class SyncReadStream>
+Post Post::receiveFrom(SyncReadStream& socket)
+{
+    using namespace detail;
+    Post result;
+    result._message=readFromSocket< std::string >(socket);
+    result.check();
+    return result;
+}
 
 #endif // POST_H

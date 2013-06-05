@@ -10,6 +10,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ssl.hpp>
 
 #include "../shared/Request.hxx"
 #include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
@@ -27,20 +28,26 @@ std::atomic_uint_fast32_t countOfConnectedClients(0);
 static std::atomic<std::uint16_t> clientServerPort;
 // TODO slaveServerPort
 
-void startClientServer()
+void startClientServer(const std::string &certificate, const std::string &privateKey)
 {
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(),clientServerPort);
     boost::asio::ip::tcp::acceptor acceptor(io_service,endpoint);
+
+    boost::asio::ssl::context context(boost::asio::ssl::context::tlsv1_server);
+    context.set_options(boost::asio::ssl::context::default_workarounds);
+    context.use_certificate_chain_file(certificate);
+    context.use_private_key_file(privateKey,boost::asio::ssl::context::pem);
+
     while(!stopServer)
     {
         try
         {
-            boost::asio::ip::tcp::socket socket(io_service);
-            acceptor.accept(socket);
+            auto socket=std::make_shared<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>>(io_service,context);
+            acceptor.accept(socket->lowest_layer());
             try
             {
-                std::shared_ptr<ClientRequest> dispatcher(new ClientRequest(std::move(socket)));
-                std::thread t(&ClientRequest::dispatch,dispatcher.get(),dispatcher);
+                auto dispatcher=std::make_shared<ClientRequest<decltype(socket)::element_type>>(socket);
+                std::thread t(&ClientRequest<decltype(socket)::element_type>::dispatch,dispatcher.get(),dispatcher);
                 t.detach();
             }
             catch(...)
@@ -79,9 +86,9 @@ void startStopServer(const std::string &param)
 
 int main(int argc,char**argv)
 {
-    if(argc!=2 && argc!=3)
+    if(argc<4)
     {
-        std::cerr<<argv[0]<<" [client port] [[config]]\n";
+        std::cerr<<argv[0]<<" [client port] [certificate] [key] [[config]]\n";
         return 1;
     }
     {
@@ -98,8 +105,8 @@ int main(int argc,char**argv)
         }
     }
     clientServerPort=std::stoul(argv[1]);
-    std::thread clientServerThread(startClientServer);
-    startStopServer(argc>=3?argv[2]:"");
+    std::thread clientServerThread(startClientServer,argv[2],argv[3]);
+    startStopServer(argc>=5?argv[4]:"");
     clientServerThread.join();
     while(countOfConnectedClients!=0)
     {

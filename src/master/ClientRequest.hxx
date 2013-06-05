@@ -14,6 +14,7 @@ extern std::atomic_uint_fast32_t countOfConnectedClients;
 /**
  * Obsługuje żądanie od klienta
  */
+template<class Stream>
 class ClientRequest final
 {
 public:
@@ -26,15 +27,77 @@ public:
      * @param socket gniazdo z którego będzie odczytane żądanie i wysłana
      * odpowiedź
      */
-    ClientRequest(boost::asio::ip::tcp::socket &&socket);
+
+    ClientRequest(std::shared_ptr<Stream> socket);
 
     /**
      * Wykonuje wszystkie działania związane z obsługą żądania
      */
-    void dispatch(std::shared_ptr<ClientRequest> handle) noexcept;
+    void dispatch(std::shared_ptr<ClientRequest<Stream>> handle) noexcept;
 
 private:
-    boost::asio::ip::tcp::socket _socket;
+    std::shared_ptr<Stream> _socket;
 };
+
+
+#include <mutex>
+
+#include <boost/asio/ssl.hpp>
+
+#include "../ConnCM/ClientToMasterRequest.hxx"
+#include "../ConnCM/ClientToMasterReply.hxx"
+#include "../shared/Request.hxx"
+#include "Database.hxx"
+
+template<class Stream>
+ClientRequest<Stream>::ClientRequest(std::shared_ptr<Stream> socket) :
+_socket(socket)
+{
+    ++countOfConnectedClients;
+}
+
+template<class Stream>
+ClientRequest<Stream>::~ClientRequest()
+{
+    --countOfConnectedClients;
+}
+
+template<class Stream>
+void ClientRequest<Stream>::dispatch(std::shared_ptr< ClientRequest<Stream> > handle) noexcept
+{
+    try
+    {
+        _socket->handshake(boost::asio::ssl::stream_base::server);
+        ClientToMasterRequest req=ClientToMasterRequest::receiveFrom(*_socket);
+        std::vector<std::pair<DiscussionId,Address>> newDiscussions=
+        database.createNewDiscussions(req.newDiscussions());
+        ClientToMasterReply rep(database.currentDiscussionListVersion());
+        for(const auto nd : newDiscussions)
+        {
+            rep.addNewDiscussion(nd.first,nd.second);
+        }
+        {
+            auto update=database.getUpdates(req.discussionListVersion());
+            for(const auto u : update)
+            {
+                rep.addNewDiscussionFromUpdate(u.first,u.second);
+            }
+        }
+        for(const auto d : req.discussionsToSynchronization())
+        {
+            rep.addDiscussionToSynchronization(database.getSlave(d));
+        }
+        rep.sendTo(*_socket,req);
+        _socket->shutdown();
+    }
+    catch(const std::exception &e)
+    {
+    }
+    catch(...)
+    {
+        // ignore
+    }
+}
+
 
 #endif // CLIENTREQUEST_H

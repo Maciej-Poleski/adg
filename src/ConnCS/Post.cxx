@@ -35,21 +35,6 @@ void Post::check() const
     checkAll();
 }
 
-void Post::sendTo(boost::asio::ip::tcp::socket& socket) const
-{
-    check();
-    using namespace detail;
-    writeToSocket(_message,socket);
-}
-
-Post Post::receiveFrom(boost::asio::ip::tcp::socket& socket)
-{
-    using namespace detail;
-    Post result;
-    result._message=readFromSocket< std::string >(socket);
-    result.check();
-    return result;
-}
 
 void Post::checkMessage() const
 {
@@ -62,16 +47,16 @@ void Post::checkAll() const
     checkMessage();
 }
 
-namespace detail
-{
-    void writeToSocket(const Post &p, boost::asio::ip::tcp::socket& socket)
-    {
-        p.sendTo(socket);
-    }
-
-    template<>
-    Post readFromSocket< Post>(boost::asio::ip::tcp::socket& socket)
-    {
-        return Post::receiveFrom(socket);
-    }
-};
+// namespace detail
+// {
+//     void writeToSocket(const Post &p, boost::asio::ip::tcp::socket& socket)
+//     {
+//         p.sendTo(socket);
+//     }
+//
+//     template<>
+//     Post readFromSocket< Post>(boost::asio::ip::tcp::socket& socket)
+//     {
+//         return Post::receiveFrom(socket);
+//     }
+// };

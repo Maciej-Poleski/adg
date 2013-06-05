@@ -8,6 +8,7 @@
 #include <functional>
 
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ssl.hpp>
 
 #include "../ConnMS/MasterToSlaveRequestNewDiscussion.hxx"
 #include "../ConnMS/MasterToSlaveReplyNewDiscussion.hxx"
@@ -29,8 +30,13 @@ Database::createNewDiscussions(std::vector< std::string > newDiscussions)
         // forwardować do wybranego slave....
         try
         {
-            boost::asio::ip::tcp::socket socket(io_service);
-            socket.connect(slave.second);
+            boost::asio::ssl::context context(boost::asio::ssl::context::tlsv1_client);
+            context.set_options(boost::asio::ssl::context::default_workarounds);
+
+            boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket(io_service,context);
+            socket.lowest_layer().connect(slave.second);
+            socket.handshake(boost::asio::ssl::stream_base::client);
+
             MasterToSlaveRequestNewDiscussion req;
             DiscussionId id=_nextDiscussionId++;
             req.setId(id);
