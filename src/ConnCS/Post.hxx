@@ -28,7 +28,7 @@ public:
     /**
      * Odbiera wiadomość
      *
-     * @param socket gniazdo z którego zostanie odebrana wiadomość
+     * @param socket strumień z którego zostanie odebrana wiadomość
      * @return odebrana wiadomość
      */
     template<class SyncReadStream>
@@ -51,7 +51,7 @@ public:
     /**
      * Wysyła wiadomość
      *
-     * @param socket gniazdo do którego zostanie wysłana wiadomość
+     * @param socket strumień do którego zostanie wysłana wiadomość
      */
     template<class SyncWriteStream>
     void sendTo(SyncWriteStream &socket) const;
@@ -75,13 +75,6 @@ private:
 private:
     std::string _message;
 };
-
-// namespace detail
-// {
-//     void writeToSocket(const Post &post,boost::asio::ip::tcp::socket &socket);
-//     template<>
-//     Post readFromSocket<Post>(boost::asio::ip::tcp::socket &socket);
-// };
 
 template<class SyncWriteStream>
 void Post::sendTo(SyncWriteStream& socket) const

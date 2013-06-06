@@ -35,7 +35,7 @@ public:
      * Odbiera odpowiedź na podane zapytanie od Mastera i tworzy na jej
      * podstawie obiekt tej klasy
      *
-     * @param socket gniazdo z którego będzie odebrana odpowiedź
+     * @param socket strumień z którego będzie odebrana odpowiedź
      * @param request zapytanie na które będzie odbierana odpowiedź
      * @return odpowiedź mastera w postaci obiektu
      */
@@ -99,7 +99,7 @@ public:
     /**
      * Wysyła tą odpowiedź
      *
-     * @param socket gniazdo na które zostanie wysłana ta odpowiedź
+     * @param socket strumień na który zostanie wysłana ta odpowiedź
      * @param request żądanie na które zostanie wysłana ta odpowiedź
      */
     template<class SyncWriteStream>
@@ -110,7 +110,7 @@ public:
      * Wysyła informację o użyciu przez klienta nieobsługiwanej wersji
      * protokołu
      *
-     * @param socket gniazdo na które zostanie wysłana informacja
+     * @param socket strumień na który zostanie wysłana informacja
      */
     template<class SyncWriteStream>
     static void sendUnsupportedTo(SyncWriteStream &socket);

@@ -72,7 +72,7 @@ public:
     /**
      * Wysyła odpowiedź
      *
-     * @param socket gniazdo do którego zostanie wysłana adpowiedź
+     * @param socket strumień do którego zostanie wysłana adpowiedź
      * @param request żądanie na które wysyłana jest odpowiedź
      */
     template<class SyncWriteStream>

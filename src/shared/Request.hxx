@@ -67,7 +67,7 @@ void checkPostId(PostId id);
  * obiekcie dowolnego typu
  *
  * @param o obiekt który zostanie wysłany
- * @param socket gniazdo na które zostanie wysłany obiekt
+ * @param socket strumień na który zostanie wysłany obiekt
  */
 template<class T,class SyncWriteStream>
 void sendTo(const T& o, SyncWriteStream& socket);
@@ -76,7 +76,7 @@ void sendTo(const T& o, SyncWriteStream& socket);
  * Globalna funkcja realizująca żądanie transmisji przychodzącej dowolnego
  * obiektu dowolnego typu
  *
- * @param socket gniazdo z którego zostanie odebrany obiekt
+ * @param socket strumień z którego zostanie odebrany obiekt
  * @return odebrany obiekt
  */
 template<class T,class SyncReadStream>
@@ -90,30 +90,9 @@ typedef unsigned char byte;
 
 template<class SyncWriteStream>
 void writeUint32ToSocket(std::uint32_t count,SyncWriteStream &socket);
-// template<class SyncWriteStream>
-// void writeToSocket(const std::string &string,SyncWriteStream &socket);
-// template<class SyncWriteStream>
-// void writeToSocket(const Address &address,SyncWriteStream &socket);
-// template<class SyncWriteStream>
-// void writeToSocket(byte byte,SyncWriteStream &socket);
-// template<typename T,class SyncWriteStream>
-// void writeToSocket(const T &o,SyncWriteStream &socket);
-//
+
 template<class SyncReadStream>
 std::uint32_t readUint32FromSocket(SyncReadStream &socket);
-// template<class SyncReadStream>
-// std::string readStringFromSocket(SyncReadStream &socket);
-//
-// template<typename T,class SyncReadStream>
-// T readFromSocket(SyncReadStream& socket);
-// template<class SyncReadStream>
-// Address readFromSocket<Address>(SyncReadStream &socket);
-// template<class SyncReadStream>
-// std::uint32_t readFromSocket<std::uint32_t>(SyncReadStream &socket);
-// template<class SyncReadStream>
-// std::string readFromSocket<std::string>(SyncReadStream &socket);
-// template<class SyncReadStream>
-// byte readFromSocket<byte>(SyncReadStream &socket);
 };
 
 
@@ -179,16 +158,7 @@ union Uint32Union
         byte b[4];
     };
 };
-//
-// union Uint16Union
-// {
-//     std::uint16_t ndc;
-//     struct
-//     {
-//         byte b[2];
-//     };
-// };
-//
+
 template<class SyncWriteStream>
 void writeUint32ToSocket(std::uint32_t count, SyncWriteStream& socket)
 {
@@ -196,33 +166,7 @@ void writeUint32ToSocket(std::uint32_t count, SyncWriteStream& socket)
     u.ndc=count;
     boost::asio::write(socket,boost::asio::buffer(u.b));
 }
-//
-// template<class SyncWriteStream>
-// void writeToSocket(const std::string& string, SyncWriteStream& socket)
-// {
-//     writeToSocket(static_cast<std::uint32_t>(string.size()),socket);
-//     boost::asio::write(socket,boost::asio::buffer(string));
-// }
-//
-// template<class SyncWriteStream>
-// void writeToSocket(const Address& address, SyncWriteStream& socket)
-// {
-//     Uint32Union ua;
-//     Uint16Union up;
-//     ua.ndc=address.ip;
-//     up.ndc=address.port;
-//     boost::asio::write(socket,boost::asio::buffer(ua.b));
-//     boost::asio::write(socket,boost::asio::buffer(up.b));
-// }
-//
-// template<class SyncWriteStream>
-// void writeToSocket(byte b, SyncWriteStream& socket)
-// {
-//     byte v[1]= {b};
-//     boost::asio::write(socket,boost::asio::buffer(v),
-//                        boost::asio::transfer_exactly(1));
-// }
-//
+
 template<class SyncReadStream>
 std::uint32_t readUint32FromSocket(SyncReadStream& socket)
 {
@@ -230,12 +174,6 @@ std::uint32_t readUint32FromSocket(SyncReadStream& socket)
     boost::asio::read(socket,boost::asio::buffer(u.b),boost::asio::transfer_exactly(4));
     return u.ndc;
 }
-//
-// template<class SyncReadStream>
-// std::string readStringFromSocket(SyncReadStream& socket)
-// {
-//     return readFromSocket< std::string >(socket);
-// }
 
 };
 

@@ -46,17 +46,3 @@ void Post::checkAll() const
 {
     checkMessage();
 }
-
-// namespace detail
-// {
-//     void writeToSocket(const Post &p, boost::asio::ip::tcp::socket& socket)
-//     {
-//         p.sendTo(socket);
-//     }
-//
-//     template<>
-//     Post readFromSocket< Post>(boost::asio::ip::tcp::socket& socket)
-//     {
-//         return Post::receiveFrom(socket);
-//     }
-// };

@@ -24,7 +24,7 @@ public:
     /**
      * Inicjalizuje obiekt
      *
-     * @param socket gniazdo z którego będzie odczytane żądanie i wysłana
+     * @param socket strumień z którego będzie odczytane żądanie i wysłana
      * odpowiedź
      */
 

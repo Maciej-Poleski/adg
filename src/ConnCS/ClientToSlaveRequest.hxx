@@ -30,7 +30,7 @@ public:
     /**
      * Odbiera żądanie
      *
-     * @param socket gniazdo z którego zostanie odebrane żądanie
+     * @param socket strumień z którego zostanie odebrane żądanie
      * @return odebrane żądanie
      */
     template<class SyncReadStream>
@@ -55,7 +55,7 @@ public:
     /**
      * Wysyła żądanie
      *
-     * @param socket gniazdo na które zostanie wysłane żądanie
+     * @param socket strumień na który zostanie wysłane żądanie
      */
     template<class SyncWriteStream>
     void sendTo(SyncWriteStream &socket) const;
